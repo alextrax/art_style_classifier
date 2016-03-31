@@ -4,7 +4,7 @@ import os
 import errno
 from flask import Flask, g, request, render_template
 from sqlalchemy import *
-
+import random
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 static_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static')
@@ -18,6 +18,12 @@ app.secret_key = os.urandom(24)
 DATABASEURI = "postgresql://localhost/artdb"
 engine = create_engine(DATABASEURI)
 
+class img_info:
+  def __init__(self, img_id, style, name, url):
+    self.img_id = img_id
+    self.style = style
+    self.name = name
+    self.url = url
 
 @app.before_request
 def before_request():
@@ -50,17 +56,41 @@ def teardown_request(exception):
 def index():
   return render_template("index.html")
 
-@app.route('/show_img_byID')
-def show_img_byID():
+def get_result_id(src):
+  print src
+  return random.sample(range(0, 8000), 6)
+
+  
+def build_img_info(img_id, table):
+  if img_id != None:
+    if table == "tests":
+      cursor = g.conn.execute("SELECT * FROM tests WHERE id = %s", img_id)
+    elif table == "imgs":
+      cursor = g.conn.execute("SELECT * FROM imgs WHERE id = %s", img_id)
+    else:
+      return None   
+    entry = cursor.fetchone() 
+    if entry != None:
+      url = "/static/img/" + entry['name']
+      return img_info(img_id, entry['style'], entry['name'], url)
+  cursor.close()
+  return None   
+
+@app.route('/query')
+def query():
   img_id = request.args.get("img_id")
   if img_id != None:
-    cursor = g.conn.execute("SELECT * FROM imgs WHERE id = %s", img_id)
-    img_info = cursor.fetchone() 
-    if img_info != None:
-      url = "/static/img/" + img_info['name']
-      return render_template("show_image.html", name = img_info['name'],  url = url, style = img_info['style'])
+    source = build_img_info(img_id, "tests")
+    if source != None:
+      results_id = get_result_id(int(img_id))
+      results_list = list()
+      for i in results_id:
+        img = build_img_info(str(i), "imgs")
+        results_list.append(img)
+      return render_template("show_image.html", source = source, results_list= results_list)
     else:
       return "img does not exist" 
+
 
 if __name__ == "__main__":
   import click

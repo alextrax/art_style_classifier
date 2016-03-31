@@ -1,16 +1,23 @@
 # how to run psql locally:
   initdb [project_root]/data
   postgres -D [project_root]/data/
-  createdb art_db
-  psql -h localhost art_db
+  createdb artdb
+  psql -h localhost artdb
 
 # db backup:
   To dump a database called mydb into a SQL-script file:
-    $ pg_dump -U art_db -h localhost > backup.sql
+    $ pg_dump -U artdb -h localhost > backup.sql
   To reload such a script into a (freshly created) database named newdb:
-    $ psql -d art_db -f backup.sql
+    $ psql -d artdb -f backup.sql
 
 CREATE TABLE imgs(
+  id serial ,
+  style int NOT NULL,
+  name text NOT NULL,
+  PRIMARY KEY (id)
+);
+
+CREATE TABLE tests(
   id serial ,
   style int NOT NULL,
   name text NOT NULL,
