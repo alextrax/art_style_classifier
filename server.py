@@ -2,7 +2,7 @@
 
 import os
 import errno
-from flask import Flask, g, request, render_template
+from flask import Flask, g, request, render_template, redirect
 from sqlalchemy import *
 import random
 
@@ -91,6 +91,20 @@ def query():
     else:
       return "img does not exist" 
 
+@app.route('/user_test')
+def get_test_img():
+  img_id = random.randint(0,1999)
+  source = build_img_info(img_id, "tests")
+  return render_template("user_test.html", source = source, img_id = img_id)
+
+@app.route('/new_pair')
+def new_pair():
+  select = request.args.get('style')
+  img_id = request.args.get('img_id')
+  cursor = g.conn.execute("INSERT INTO user_conv (id, src, style) VALUES (DEFAULT, %s, %s);", img_id, select)
+  img_id = random.randint(0,1999)
+  source = build_img_info(img_id, "tests")
+  return render_template("user_test.html", source = source, img_id = img_id)
 
 if __name__ == "__main__":
   import click
