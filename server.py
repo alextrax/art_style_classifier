@@ -5,13 +5,18 @@ import errno
 from flask import Flask, g, request, render_template, redirect
 from sqlalchemy import *
 import random
+from werkzeug import secure_filename
+
+UPLOAD_FOLDER = '/Volumes/Alex/Columiba_course/Visual_DB/Project/database/wikiart/images/uploads'
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 static_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static')
 img_dir = "/Volumes/Alex/Columiba_course/Visual_DB/Project/database/wikiart/images/"
 
 app = Flask(__name__, template_folder=tmpl_dir)
-
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.secret_key = os.urandom(24)
 
 
@@ -55,6 +60,26 @@ def teardown_request(exception):
 @app.route('/')
 def index():
   return render_template("index.html")
+
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+
+@app.route('/upload_file', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        file = request.files['file']
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return redirect('/')
+
+
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 def get_result_id(src):
   print src
@@ -102,6 +127,7 @@ def new_pair():
   select = request.args.get('style')
   img_id = request.args.get('img_id')
   cursor = g.conn.execute("INSERT INTO user_conv (id, src, style) VALUES (DEFAULT, %s, %s);", img_id, select)
+  return redirect('user_test')
   img_id = random.randint(0,1999)
   source = build_img_info(img_id, "tests")
   return render_template("user_test.html", source = source, img_id = img_id)
