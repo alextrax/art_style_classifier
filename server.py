@@ -6,6 +6,7 @@ from flask import Flask, g, request, render_template, redirect
 from sqlalchemy import *
 import random
 from werkzeug import secure_filename
+from flask_bootstrap import Bootstrap
 
 UPLOAD_FOLDER = '/Volumes/Alex/Columiba_course/Visual_DB/Project/database/wikiart/images/uploads'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
@@ -18,15 +19,18 @@ img_dir = "/Volumes/Alex/Columiba_course/Visual_DB/Project/database/wikiart/imag
 app = Flask(__name__, template_folder=tmpl_dir)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.secret_key = os.urandom(24)
-
+Bootstrap(app)
 
 DATABASEURI = "postgresql://localhost/artdb"
 engine = create_engine(DATABASEURI)
 
+style_name = ["Art Nouveau (Modern)", "Baroque", "Expressionism", "Impressionism", "Neoclassicism", "Post-Impressionism", "Realism", "Romanticism", "Surrealism", "Symbolism"]
+
 class img_info:
-  def __init__(self, img_id, style, name, url):
+  def __init__(self, img_id, style, artist, name, url):
     self.img_id = img_id
-    self.style = style
+    self.style = get_style_name(style)
+    self.artist = artist
     self.name = name
     self.url = url
 
@@ -75,6 +79,9 @@ def upload_file():
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             return redirect('/')
 
+def get_style_name(style_id):
+  return style_name[style_id]
+
 
 
 def allowed_file(filename):
@@ -83,7 +90,7 @@ def allowed_file(filename):
 
 def get_result_id(src):
   print src
-  return random.sample(range(0, 8000), 6)
+  return random.sample(range(0, 8000), 8)
 
   
 def build_img_info(img_id, table):
@@ -97,7 +104,10 @@ def build_img_info(img_id, table):
     entry = cursor.fetchone() 
     if entry != None:
       url = "/static/img/" + entry['name']
-      return img_info(img_id, entry['style'], entry['name'], url)
+      info = entry['name'].split("_")
+      artist = info[0].replace("-"," ")
+      name = (info[1].replace("-", " ")).replace(".jpg","")
+      return img_info(img_id, entry['style'], artist, name, url)
   cursor.close()
   return None   
 
@@ -112,7 +122,8 @@ def query():
       for i in results_id:
         img = build_img_info(str(i), "imgs")
         results_list.append(img)
-      return render_template("show_image.html", source = source, results_list= results_list)
+      poss = random.sample(range(0, 10), 10)  
+      return render_template("show_image.html", source = source, results_list = results_list, poss = poss)
     else:
       return "img does not exist" 
 
