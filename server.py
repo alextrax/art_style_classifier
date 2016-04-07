@@ -83,11 +83,6 @@ def get_style_name(style_id):
   return style_name[style_id]
 
 
-
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
-
 def get_result_id(src):
   print src
   return random.sample(range(0, 8000), 8)
