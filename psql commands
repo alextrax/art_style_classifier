@@ -32,3 +32,5 @@ CREATE TABLE user_conv(
   PRIMARY KEY (id),
   FOREIGN KEY(src) REFERENCES tests 
 );
+
+INSERT INTO user_conv (id, src, style) VALUES (DEFAULT, 42, 7);

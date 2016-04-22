@@ -128,6 +128,25 @@ def get_test_img():
   source = build_img_info(img_id, "tests")
   return render_template("user_test.html", source = source, img_id = img_id)
 
+@app.route('/user_grouping')
+def user_grouping():
+  img_id = random.randint(0,1999)
+  results_id = get_result_id(int(img_id))
+  results_list = list()
+  for i in results_id:
+    img = build_img_info(str(i), "imgs")
+    results_list.append(img)
+
+  return render_template("user_grouping.html", source = img_id, results_list = results_list)
+
+@app.route('/group_result', methods=['GET', 'POST'])
+def group_result():
+  selected = request.form.getlist('check')
+  s = ""
+  for i in selected:
+    s += (" "+i)
+  return s
+
 @app.route('/new_pair')
 def new_pair():
   select = request.args.get('style')
