@@ -1,6 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <link rel="stylesheet" media="screen" href = "{{ url_for('static', filename='bootstrap.min.css') }}">
+<link rel="stylesheet" type="text/css" href= "{{ url_for('static', filename='column.css') }}">
 
 <head>
 
@@ -9,43 +10,46 @@
 <body>
 
 <div class="container">
-<div class="row">
-<div class="col-lg-12">
-                <h1 class="page-header">Source Image</h1>
-</div>
-<div class="col-lg-6 col-md-4 col-xs-6 thumb">
+
+<dic class="row">
+<div class="col-sm-4" id="left">
+    <h1 class="page-header">Source Image</h1>
 <img class="img-responsive"  src='{{source.url}}' style="height: 300px;" />
 <div> img_id: {{source.img_id}} </div>
 <div> style: {{source.style}} </div>
+ <form role="form" action="/group_result" method="POST">  
+<input type="hidden" name="img_id" value='{{source.img_id}}'/>
+<input type="hidden" name="all_id" value='{{all_id}}'/>
+<input type="text" name="uid" value='{{uid}}'/>
+ <input type=submit value='submit'>
 </div>
-<div class="col-lg-6 col-md-4 col-xs-6 thumb">  
 
-</div>
-</div>
-</div>
 
-<div class="container">	
-<div class="row">
 
-            <div class="col-lg-12">
+
+
+
+    
+ <div class="col-lg-3 col-md-4 col-xs-6 thumb" id="right">   
+
                 <h1 class="page-header">Please Choose Similar Images</h1>
-            </div>
- <form role="form" action="/group_result" method="POST">           
+
 {% for n in results_list %}
-            <div class="col-lg-3 col-md-4 col-xs-6 thumb">
-                <a class="thumbnail" href="#">
-                    <img class="img-responsive" src="{{n.url}}" alt="" style="height: 300px;">
+         <div class ="col-xs-3 ">
+                <a class="thumbnail"  href="#">
+                    <img class="img-responsive" src="{{n.url}}" alt="" style="height: 150px;">
                 </a>
                 <div class="checkbox">
       				<label><input type="checkbox" name="check" value="{{n.img_id}}"></label>
     			</div>
-            </div>
-{% endfor %}            
-<input type="hidden" name="img_id" value='{{source.img_id}}'/>
- <input type=submit value='submit'>
+         </div>       
+{% endfor %}
+</row>
+</div>            
+
 </form>
 </div>
-
+</div>
 </body>
 
 </html>	

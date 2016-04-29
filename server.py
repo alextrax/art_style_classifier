@@ -85,7 +85,7 @@ def get_style_name(style_id):
 
 def get_result_id(src):
   print src
-  return random.sample(range(0, 8000), 8)
+  return random.sample(range(0, 8000), 32)
 
   
 def build_img_info(img_id, table):
@@ -128,8 +128,11 @@ def get_test_img():
   source = build_img_info(img_id, "tests")
   return render_template("user_test.html", source = source, img_id = img_id)
 
-@app.route('/user_grouping')
+@app.route('/user_grouping', methods=['GET', 'POST'])
 def user_grouping():
+  uid = request.args.get('uid')
+  if uid == None:
+    uid = 'Please type your name'
   img_id = random.randint(0,1999)
   source = build_img_info(img_id, "tests")
   results_id = get_result_id(int(img_id))
@@ -138,16 +141,18 @@ def user_grouping():
     img = build_img_info(str(i), "imgs")
     results_list.append(img)
 
-  return render_template("user_grouping.html", source = source, results_list = results_list)
+  return render_template("user_grouping.html", source = source, results_list = results_list, uid = uid, all_id = results_id)
 
 @app.route('/group_result', methods=['GET', 'POST'])
 def group_result():
   selected = request.form.getlist('check')
+  all_id = request.form.get('all_id')
   img_id = request.form.get('img_id')
-  s = "img_id: " + img_id + "\n Chosen:"
-  for i in selected:
-    s += (" "+i)
-  return s
+  uid = request.form.get('uid')
+ 
+  g.conn.execute("INSERT INTO user_group (id, source_id, pics, uid, all_id) VALUES (DEFAULT, %s, %s, %s, %s);", img_id, selected, uid, all_id)
+
+  return redirect('/user_grouping?uid='+uid)
 
 @app.route('/new_pair')
 def new_pair():

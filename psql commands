@@ -34,3 +34,12 @@ CREATE TABLE user_conv(
 );
 
 INSERT INTO user_conv (id, src, style) VALUES (DEFAULT, 42, 7);
+
+CREATE TABLE user_group(
+  id serial ,
+  source_id int NOT NULL,
+  pics text NOT NULL,
+  uid text,
+  all_id text,
+  PRIMARY KEY (id)
+);
