@@ -131,18 +131,20 @@ def get_test_img():
 @app.route('/user_grouping')
 def user_grouping():
   img_id = random.randint(0,1999)
+  source = build_img_info(img_id, "tests")
   results_id = get_result_id(int(img_id))
   results_list = list()
   for i in results_id:
     img = build_img_info(str(i), "imgs")
     results_list.append(img)
 
-  return render_template("user_grouping.html", source = img_id, results_list = results_list)
+  return render_template("user_grouping.html", source = source, results_list = results_list)
 
 @app.route('/group_result', methods=['GET', 'POST'])
 def group_result():
   selected = request.form.getlist('check')
-  s = ""
+  img_id = request.form.get('img_id')
+  s = "img_id: " + img_id + "\n Chosen:"
   for i in selected:
     s += (" "+i)
   return s
