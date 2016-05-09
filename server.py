@@ -131,8 +131,21 @@ def query():
       for i in results_id:
         img = build_img_info(str(i), "imgs")
         results_list.append(img)
+
+      results_id = get_result_id(int(img_id))
+      author_pics = list()
+      for i in results_id:
+        img = build_img_info(str(i), "imgs")
+        author_pics.append(img)
+
+      results_id = get_result_id(int(img_id))
+      age_pics = list()
+      for i in results_id:
+        img = build_img_info(str(i), "imgs")
+        age_pics.append(img)
+
       poss = random.sample(range(0, 10), 10)  
-      return render_template("show_image.html", source = source, results_list = results_list, poss = poss, authors = get_authors(), ages = get_ages())
+      return render_template("show_image.html", source = source, results_list = results_list, poss = poss, authors = get_authors(), ages = get_ages(), author_pics = author_pics, age_pics = age_pics)
     else:
       return "img does not exist" 
 

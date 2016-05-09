@@ -176,7 +176,7 @@ $(window).resize(function() {
 
 <style type="text/css">
 .carousel{
-    background: #2f4357;
+    background: #FFFFFF;
     margin-top: 0px;
 }
 .carousel .item img{
@@ -239,8 +239,20 @@ $(window).resize(function() {
 <div class="container">
 <div class="row">
 
+
+
+<div id="imgCarousel" class="carousel slide" data-ride="carousel">
+        <!-- Carousel indicators -->
+        <ol class="carousel-indicators">
+            <li data-target="#imgCarousel" data-slide-to="0" class="active"></li>
+            <li data-target="#imgCarousel" data-slide-to="1"></li>
+            <li data-target="#imgCarousel" data-slide-to="2"></li>
+        </ol>   
+        <!-- Wrapper for carousel items -->
+        <div class="carousel-inner">
+        	<div class="item active">
             <div class="col-lg-12">
-                <h1 class="page-header">Result Image</h1>
+                <h1 class="page-header">Images with Relative Styles</h1>
             </div>
 {% for n in results_list %}
             <div class="col-lg-3 col-md-3 col-xs-5 thumb">
@@ -249,7 +261,41 @@ $(window).resize(function() {
                     <img class="img-responsive" src="{{n.url}}" alt="" style="height: 300px;">
                 </a>
             </div>
-{% endfor %}            
+{% endfor %}  
+        	</div>
+            <div class="item">
+            <div class="col-lg-12">
+                <h1 class="page-header">Images with Relative Authors</h1>
+            </div>
+{% for n in author_pics %}
+            <div class="col-lg-3 col-md-3 col-xs-5 thumb">
+            	{{n.artist}}</br>	
+                <a class="thumbnail" href="#">
+                    <img class="img-responsive" src="{{n.url}}" alt="" style="height: 300px;">
+                </a>
+            </div>
+{% endfor %}          	
+            </div>
+        	<div class="item">
+            <div class="col-lg-12">
+                <h1 class="page-header">Images with Relative Ages</h1>
+            </div>
+{% for n in age_pics %}
+            <div class="col-lg-3 col-md-3 col-xs-5 thumb">
+            	{{n.artist}}</br>	
+                <a class="thumbnail" href="#">
+                    <img class="img-responsive" src="{{n.url}}" alt="" style="height: 300px;">
+                </a>
+            </div>
+{% endfor %}          	
+        	</div>
+        </div>
+
+
+        
+    </div>
+
+
 </div>
 
 </body>
