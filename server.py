@@ -85,9 +85,23 @@ def get_style_name(style_id):
 
 def get_result_id(src):
   print src
-  return random.sample(range(0, 8000), 32)
+  return random.sample(range(0, 8000), 8)
 
+
+def get_authors():
+  authors = list()
+  authors.append(("Picasso",8)) # Author Name, Possibility
+  authors.append(("Van Gogh",6))
+  authors.append(("Monet",4))
+  return authors
   
+def get_ages():
+  ages = list()
+  ages.append(("17th century",3)) # Author Name, Possibility
+  ages.append(("20th century",5))
+  ages.append(("18th century",7))
+  return ages
+
 def build_img_info(img_id, table):
   if img_id != None:
     if table == "tests":
@@ -118,7 +132,7 @@ def query():
         img = build_img_info(str(i), "imgs")
         results_list.append(img)
       poss = random.sample(range(0, 10), 10)  
-      return render_template("show_image.html", source = source, results_list = results_list, poss = poss)
+      return render_template("show_image.html", source = source, results_list = results_list, poss = poss, authors = get_authors(), ages = get_ages())
     else:
       return "img does not exist" 
 
@@ -197,10 +211,7 @@ if __name__ == "__main__":
     HOST, PORT = host, port
     print "running on %s:%d" % (HOST, PORT)
     import logging
-    from themodule import FileHandler 
-    file_handler = FileHandler("log.txt")
-    file_handler.setLevel(logging.WARNING)
-    app.logger.addHandler(file_handler)
+    logging.basicConfig(filename='error.log',level=logging.DEBUG)
     app.run(host=HOST, port=PORT, debug=debug, threaded=threaded)
     
   run()

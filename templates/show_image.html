@@ -1,12 +1,21 @@
 <!DOCTYPE HTML>
 <html>
-<link rel="stylesheet" media="screen" href = "{{ url_for('static', filename='bootstrap.min.css') }}">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 
 <head>
 
 
 <script type="text/javascript">
+var charts = [];
+var width;
+var height;
+
 	window.onload = function () {
+		width = $('#myCarousel').width();
+		height = $('#myCarousel').height();
 		var chart = new CanvasJS.Chart("chartContainer", {
 
 			title:{
@@ -18,7 +27,7 @@
 				interval: 1,
 				gridThickness: 0,
 				labelFontSize: 10,
-				labelFontStyle: "normal",
+				labelFontStyle: "italic",
 				labelFontWeight: "normal",
 				labelFontFamily: "Lucida Sans Unicode"
 
@@ -28,7 +37,8 @@
 				gridColor: "rgba(1,77,101,.1)"
 
 			},
-
+			width: width,
+    		height: height,
 			data: [
 			{     
 				type: "bar",
@@ -54,9 +64,128 @@
 		});
 
 chart.render();
+charts.push(chart);
+
+		var authorchart = new CanvasJS.Chart("authorChart", {
+
+			title:{
+				text:"Possibility of Authors"				
+
+			},
+                        animationEnabled: true,
+			axisX:{
+				interval: 1,
+				gridThickness: 0,
+				labelFontSize: 15,
+				labelFontStyle: "italic",
+				labelFontWeight: "normal",
+				labelFontFamily: "Lucida Sans Unicode"
+
+			},
+			axisY2:{
+				interlacedColor: "rgba(1,77,101,.2)",
+				gridColor: "rgba(1,77,101,.1)"
+
+			},
+
+			width: width,
+    		height: height,
+			data: [
+			{     
+				type: "bar",
+                name: "authors",
+				axisYType: "secondary",
+				color: "#014D65",				
+				dataPoints: [
+				
+				{y: {{authors[0][1]}}, label: "{{authors[0][0]}}"  },
+				{y: {{authors[1][1]}}, label: "{{authors[1][0]}}"  },
+				{y: {{authors[2][1]}}, label: "{{authors[2][0]}}"  }
+				]
+			}
+			
+			]
+		});
+
+
+authorchart.render();
+charts.push(authorchart);
+
+		var agechart = new CanvasJS.Chart("ageChart", {
+
+			title:{
+				text:"Possibility of Ages"				
+
+			},
+                        animationEnabled: true,
+			axisX:{
+				interval: 1,
+				gridThickness: 0,
+				labelFontSize: 15,
+				labelFontStyle: "italic",
+				labelFontWeight: "normal",
+				labelFontFamily: "Lucida Sans Unicode"
+
+			},
+			axisY2:{
+				interlacedColor: "rgba(1,77,101,.2)",
+				gridColor: "rgba(1,77,101,.1)"
+
+			},
+
+			width: width,
+    		height: height,
+			data: [
+			{     
+				type: "bar",
+                name: "authors",
+				axisYType: "secondary",
+				color: "#014D65",				
+				dataPoints: [
+				
+				{y: {{ages[0][1]}}, label: "{{ages[0][0]}}"  },
+				{y: {{ages[1][1]}}, label: "{{ages[1][0]}}"  },
+				{y: {{ages[2][1]}}, label: "{{ages[2][0]}}"  }
+				]
+			}
+			
+			]
+		});
+
+
+agechart.render();
+charts.push(agechart);
 }
+
+
+
+
+
+
+$(window).resize(function() {
+    for(var i = 0; i < charts.length; i++) {
+        charts[i].options.width = $('#myCarousel').width();
+        charts[i].options.height = $('#myCarousel').height();
+        charts[i].render();
+    }
+});
+
 </script>
 <script type="text/javascript" src="{{ url_for('static', filename='canvasjs.min.js')}}"></script>
+
+
+<style type="text/css">
+.carousel{
+    background: #2f4357;
+    margin-top: 0px;
+}
+.carousel .item img{
+    margin: 0 auto; /* Align slide image horizontally center */
+}
+.bs-example{
+	margin: 20px;
+}
+</style>
 
 </head>
 <body>
@@ -71,7 +200,38 @@ chart.render();
 <div> style: {{source.style}} </div>
 </div>
 <div class="col-lg-6 col-md-4 col-xs-6 thumb">  
-<div id="chartContainer" style="height: 300px; width: 100%;"> </div>
+
+
+
+<div id="myCarousel" class="carousel slide" data-ride="carousel">
+        <!-- Carousel indicators -->
+        <ol class="carousel-indicators">
+            <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+            <li data-target="#myCarousel" data-slide-to="1"></li>
+            <li data-target="#myCarousel" data-slide-to="2"></li>
+        </ol>   
+        <!-- Wrapper for carousel items -->
+        <div class="carousel-inner">
+        	<div class="item active">
+            <div id="chartContainer" style="height: 300px; width: 100%;" > </div>
+        	</div>
+            <div class="item">
+            <div id="authorChart" style="height: 300px; width: 100%;" > </div>        	
+            </div>
+        	<div class="item">
+            <div id="ageChart" style="height: 300px; width: 100%;"> </div>        	
+        	</div>
+        </div>
+
+
+        
+    </div>
+</div>
+</body>
+
+
+
+
 </div>
 </div>
 </div>
@@ -83,10 +243,8 @@ chart.render();
                 <h1 class="page-header">Result Image</h1>
             </div>
 {% for n in results_list %}
-            <div class="col-lg-3 col-md-4 col-xs-6 thumb">
+            <div class="col-lg-3 col-md-3 col-xs-5 thumb">
             	{{n.artist}}</br>	
-          		{{n.name}}</br>
-          		{{n.style}}</br>
                 <a class="thumbnail" href="#">
                     <img class="img-responsive" src="{{n.url}}" alt="" style="height: 300px;">
                 </a>
