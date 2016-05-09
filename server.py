@@ -149,10 +149,13 @@ def group_result():
   all_id = request.form.get('all_id')
   img_id = request.form.get('img_id')
   uid = request.form.get('uid')
- 
-  g.conn.execute("INSERT INTO user_group (id, source_id, pics, uid, all_id) VALUES (DEFAULT, %s, %s, %s, %s);", img_id, selected, uid, all_id)
+  if img_id != None:
+    g.conn.execute("INSERT INTO user_group (id, source_id, pics, uid, all_id) VALUES (DEFAULT, %s, %s, %s, %s);", img_id, selected, uid, all_id)
 
-  return redirect('/user_grouping?uid='+uid)
+  if uid != None:
+    return redirect('/user_grouping?uid='+uid)
+  else:
+    return redirect('/user_grouping')  
 
 @app.route('/new_pair')
 def new_pair():
@@ -193,6 +196,11 @@ if __name__ == "__main__":
 
     HOST, PORT = host, port
     print "running on %s:%d" % (HOST, PORT)
+    import logging
+    from themodule import FileHandler 
+    file_handler = FileHandler("log.txt")
+    file_handler.setLevel(logging.WARNING)
+    app.logger.addHandler(file_handler)
     app.run(host=HOST, port=PORT, debug=debug, threaded=threaded)
     
   run()
